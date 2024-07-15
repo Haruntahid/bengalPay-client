@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { CiLogout } from "react-icons/ci";
 import { IoClose, IoMenu } from "react-icons/io5";
 import { Link, Outlet } from "react-router-dom";
+import { AuthContext } from "../provider/AuthProvider";
 
 function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user, logout, loading } = useContext(AuthContext);
+  console.log(user);
+
+  if (loading) return <p className="text-6xl">Loading..........</p>;
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -23,11 +28,12 @@ function Layout() {
         </button>
 
         <Link to={"/"}>
-          <img
+          {/* <img
             className="w-auto h-14 mx-auto"
             src="https://i.ibb.co/2qtgY2Z/445379615-331727106468525-5982881440624507647-n.png"
             alt=""
-          />
+          /> */}
+          <p className="text-3xl text-center font-bold text-white">BengalPay</p>
         </Link>
 
         <div className="flex flex-col justify-between flex-1 mt-6">

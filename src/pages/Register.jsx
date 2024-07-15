@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import bcrypt from "bcryptjs";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function Register() {
   const [showPin, setShowPin] = useState(false);
@@ -20,13 +21,17 @@ function Register() {
 
       // Now you can send `hashedPin` to your backend API
       const formData = {
-        ...data,
+        name: data.name,
+        email: data.email,
+        // Combine 0 with user input for phone number
+        phone: `0${data.phone}`,
+        accountType: data.accountType,
+        status: "pending",
         pin: hashedPin,
-        // Combine +880 with user input for phone number
-        phone: ` 0${data.phone}`,
       };
 
-      console.log(formData); // For testing, you should send this data to your backend instead
+      const res = await axios.post("http://localhost:5000/users", formData);
+      console.log(res.data); // For testing, you should send this data to your backend instead
     } catch (error) {
       console.error("Error hashing PIN:", error);
     }
