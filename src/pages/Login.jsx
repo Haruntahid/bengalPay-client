@@ -17,7 +17,8 @@ function Login() {
       const response = await axios.post("http://localhost:5000/login", data);
       console.log(response.data);
       localStorage.setItem("token", response.data.token);
-      navigate("/");
+      // navigate after login
+      navigate(location?.state ? location.state : "/");
     } catch (error) {
       console.error(error);
       alert("Login failed. Please check your credentials.");

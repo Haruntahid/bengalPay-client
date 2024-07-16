@@ -3,17 +3,34 @@ import { CiLogout } from "react-icons/ci";
 import { IoClose, IoMenu } from "react-icons/io5";
 import { Link, Outlet } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user, logout, loading } = useContext(AuthContext);
+
   console.log(user);
 
-  if (loading) return <p className="text-6xl">Loading..........</p>;
+  const { data, isLoading } = useQuery({
+    queryKey: ["single-user-data"],
+    queryFn: async () => {
+      const res = await axios.get(`http://localhost:5000/users/${user}`);
+      return res.data;
+    },
+    enabled: !!user,
+  });
 
+  if (loading || isLoading)
+    return <p className="text-6xl">Loading..........</p>;
+
+  console.log(data);
+
+  //   toogle bar for mobile view
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
   return (
     <div className="relative min-h-screen flex">
       {/* Sidebar */}
@@ -42,7 +59,10 @@ function Layout() {
 
         {/* Footer logout btn */}
         <div className="pb-10">
-          <button className="flex w-full items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-300 bg-green-700 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
+          <button
+            onClick={() => logout()}
+            className="flex w-full items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-300 bg-green-800 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+          >
             <CiLogout size={20} color="#fff" />
             <span className="mx-2 text-sm font-medium text-white">Logout</span>
           </button>

@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-
+import PropTypes from "prop-types";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -35,7 +35,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setLoading(true);
     setUser(null);
-    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setLoading(false);
   };
 
   return (
@@ -43,4 +44,8 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.any,
 };
