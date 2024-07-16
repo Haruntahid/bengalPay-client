@@ -18,7 +18,7 @@ function Login() {
       console.log(response.data);
       localStorage.setItem("token", response.data.token);
       // navigate after login
-      navigate(location?.state ? location.state : "/");
+      navigate("/"); // Navigate to home route after successful login
     } catch (error) {
       console.error(error);
       alert("Login failed. Please check your credentials.");
