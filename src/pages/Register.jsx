@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import bcrypt from "bcryptjs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 function Register() {
+  const navigate = useNavigate();
   const [showPin, setShowPin] = useState(false);
   const [showConfirmPin, setShowConfirmPin] = useState(false);
   const {
@@ -31,7 +33,13 @@ function Register() {
       };
 
       const res = await axios.post("http://localhost:5000/users", formData);
-      console.log(res.data); // For testing, you should send this data to your backend instead
+      if (res.data.insertedId) {
+        toast.success("Successfully Register");
+        navigate("/login");
+      } else {
+        toast.error(res.data.message);
+      }
+      console.log(); // For testing, you should send this data to your backend instead
     } catch (error) {
       console.error("Error hashing PIN:", error);
     }

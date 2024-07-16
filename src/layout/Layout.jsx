@@ -4,9 +4,13 @@ import { IoClose, IoMenu } from "react-icons/io5";
 import { Link, Outlet } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import AgentRoutes from "../pages/dashboard/AgentRoutes";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import UserRoutes from "../pages/dashboard/UserRoutes";
+import AdminRoutes from "../pages/dashboard/AdminRoutes";
 
 function Layout() {
+  const axiosSecure = useAxiosSecure();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user, logout, loading } = useContext(AuthContext);
 
@@ -15,7 +19,7 @@ function Layout() {
   const { data, isLoading } = useQuery({
     queryKey: ["single-user-data"],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5000/users/${user}`);
+      const res = await axiosSecure.get(`users/${user}`);
       return res.data;
     },
     enabled: !!user,
@@ -55,8 +59,11 @@ function Layout() {
           /> */}
         </Link>
 
-        <div className="flex flex-col justify-between flex-1 mt-6">
-          <Link to={"/services"}>Services</Link>
+        <div className="flex flex-col gap-4 flex-1 mt-6">
+          {/* <Link to={"/services"}>Services</Link> */}
+          {data.accountType === "Consumer" && <UserRoutes />}
+          {data.accountType === "Agent" && <AgentRoutes />}
+          {data.accountType === "Admin" && <AdminRoutes />}
         </div>
 
         {/* Footer logout btn */}
@@ -96,6 +103,7 @@ function Layout() {
           <p>
             Hello <span className="capitalize">{data.name}</span>
           </p>
+          <p>Account Type : {data.accountType}</p>
           <Outlet />
         </div>
       </div>
