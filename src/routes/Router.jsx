@@ -10,6 +10,8 @@ import UserManagement from "../components/admin/UserManagement";
 import Consumer from "../components/admin/Consumer";
 import Admins from "../components/admin/Admins";
 import Agents from "../components/admin/Agents";
+import Pending from "../components/admin/Pending";
+import Blocked from "../components/admin/Blocked";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +49,14 @@ export const router = createBrowserRouter([
       {
         path: "/admin",
         element: <Admins />,
+      },
+      {
+        path: "/pending",
+        element: <Pending />,
+      },
+      {
+        path: "/blocked",
+        element: <Blocked />,
       },
       {
         path: "/overview",

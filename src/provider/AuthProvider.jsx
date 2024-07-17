@@ -8,27 +8,35 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (token) {
       try {
         const decodedToken = JSON.parse(atob(token.split(".")[1]));
         const { name } = decodedToken;
-        setUser(name); // Set user as email or phone from token
+        setUser(name);
       } catch (error) {
         setUser(null);
       } finally {
-        setLoading(false); // Set loading to false after handling token
+        setLoading(false);
       }
     } else {
       setUser(null);
-      setLoading(false); // No token, set loading to false
+      setLoading(false);
     }
   }, []);
 
-  const login = (userData) => {
+  const login = (token) => {
     setLoading(true);
-    setUser(userData);
-    localStorage.setItem("token", JSON.stringify(userData));
-    setLoading(false);
+    localStorage.setItem("token", token);
+    try {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      const { name } = decodedToken;
+      setUser(name);
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {

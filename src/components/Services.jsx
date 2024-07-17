@@ -8,6 +8,7 @@ import { useState } from "react";
 import Modal from "./Modal";
 import CashInForm from "./servicesItems/CashInForm";
 import CashOutForm from "./servicesItems/CashOutForm";
+import BalanceInquiry from "./servicesItems/BalanceInquiry";
 
 function Services() {
   const serviceItems = [
@@ -56,6 +57,9 @@ function Services() {
           )}
           {selectedService && selectedService.name === "Cash Out" && (
             <CashOutForm onSubmit={handleSubmit} />
+          )}
+          {selectedService && selectedService.name === "Balance Inquiry" && (
+            <BalanceInquiry onSubmit={handleSubmit} />
           )}
         </Modal>
       )}

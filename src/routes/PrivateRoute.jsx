@@ -14,10 +14,17 @@ function PrivateRoute({ children }) {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" />;
+  console.log(user);
+
+  if (user) {
+    return children;
   }
-  return <>{children}</>;
+
+  return (
+    <>
+      <Navigate to="/login"></Navigate>
+    </>
+  );
 }
 
 PrivateRoute.propTypes = {

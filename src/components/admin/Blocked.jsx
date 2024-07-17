@@ -1,22 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 import UserTable from "./UserTable";
 import noData from "../../assets/noData.png";
 
-function Consumer() {
+function Blocked() {
   const axiosSecure = useAxiosSecure();
   const {
     data = [],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["consumers"],
+    queryKey: ["blocked"],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/consumers`);
+      const res = await axiosSecure.get(`/blocked`);
       return res.data;
     },
   });
-
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -26,7 +25,7 @@ function Consumer() {
   return (
     <>
       <p className="text-center my-5 text-3xl font-medium">
-        Total Consumers{" "}
+        Total Blocked Account{" "}
         <span className="bg-green-200 text-green-color px-3 py-1">
           {data.length}
         </span>
@@ -47,4 +46,4 @@ function Consumer() {
   );
 }
 
-export default Consumer;
+export default Blocked;

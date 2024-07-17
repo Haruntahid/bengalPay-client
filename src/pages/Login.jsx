@@ -1,6 +1,9 @@
 import axios from "axios";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../provider/AuthProvider";
 
 function Login() {
   const navigate = useNavigate();
@@ -9,23 +12,21 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const { login } = useContext(AuthContext);
 
   const onSubmit = async (data) => {
-    const name = data.name;
-    console.log(name);
     try {
       const response = await axios.post("http://localhost:5000/login", data);
-      console.log(response.data);
-      localStorage.setItem("token", response.data.token);
-      if (response.data) {
+      if (response.data.token) {
+        toast.success("Login Successful");
+        login(response.data.token);
         navigate("/");
       }
-      // Navigate to home route after successful login
     } catch (error) {
-      console.error(error);
-      alert("Login failed. Please check your credentials.");
+      toast.error("Login failed. Please check your credentials.");
     }
   };
+
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-gray-100">

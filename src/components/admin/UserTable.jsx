@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+import PropTypes from "prop-types";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const UserTable = ({ data, refetch }) => {
@@ -7,11 +9,21 @@ const UserTable = ({ data, refetch }) => {
     axiosSecure.patch(`/status/${id}`).then((res) => {
       console.log(res.data);
       if (res.data.modifiedCount > 0) {
-        // toast.success("Status Successfully Updated!");
-        alert("Status Successfully Updated!");
+        toast.success("Status Successfully Updated!");
         refetch();
       }
     });
+  };
+  const getButtonClass = (status) => {
+    if (status === "activated") return "bg-red-500 text-white hover:bg-red-700";
+    return "bg-green-500 text-white hover:bg-green-700";
+  };
+
+  const getButtonText = (status) => {
+    if (status === "pending") return "Activate";
+    if (status === "activated") return "Blocked";
+    if (status === "blocked") return "Activate";
+    return "Unblock";
   };
   return (
     <div className="overflow-x-auto">
@@ -60,7 +72,7 @@ const UserTable = ({ data, refetch }) => {
                   className={`px-6 py-1 rounded-full ${
                     user.status === "pending"
                       ? "bg-yellow-100 text-yellow-500"
-                      : user.status === "active"
+                      : user.status === "activated"
                       ? "bg-green-100 text-green-500"
                       : user.status === "blocked"
                       ? "bg-red-100 text-red-500"
@@ -73,13 +85,11 @@ const UserTable = ({ data, refetch }) => {
               <td className="py-3 px-6 text-center">
                 <button
                   onClick={() => handleStatus(user._id)}
-                  className={`px-5 py-2 rounded-md min-w-28 text-xs ${
-                    user.status === "active"
-                      ? "bg-red-500 text-white hover:bg-red-700"
-                      : "bg-green-500 text-white hover:bg-green-700"
-                  }`}
+                  className={`px-5 py-2 rounded-md min-w-28 text-xs ${getButtonClass(
+                    user.status
+                  )}`}
                 >
-                  {user.status === "pending" ? "Activated" : "Blocked"}
+                  {getButtonText(user.status)}
                 </button>
               </td>
             </tr>
@@ -88,6 +98,11 @@ const UserTable = ({ data, refetch }) => {
       </table>
     </div>
   );
+};
+
+UserTable.propTypes = {
+  data: PropTypes.array,
+  refetch: PropTypes.func,
 };
 
 export default UserTable;

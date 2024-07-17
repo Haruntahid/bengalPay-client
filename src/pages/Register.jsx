@@ -30,6 +30,7 @@ function Register() {
         accountType: data.accountType,
         status: "pending",
         pin: hashedPin,
+        balance: 0,
       };
 
       const res = await axios.post("http://localhost:5000/users", formData);
@@ -39,7 +40,6 @@ function Register() {
       } else {
         toast.error(res.data.message);
       }
-      console.log(); // For testing, you should send this data to your backend instead
     } catch (error) {
       console.error("Error hashing PIN:", error);
     }

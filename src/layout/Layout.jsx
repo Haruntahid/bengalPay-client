@@ -26,7 +26,11 @@ function Layout() {
   });
 
   if (loading || isLoading)
-    return <p className="text-6xl">Loading..........</p>;
+    return (
+      <div className="flex justify-center items-center h-[80vh]">
+        <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin dark:border-green-color"></div>
+      </div>
+    );
 
   console.log(data);
 

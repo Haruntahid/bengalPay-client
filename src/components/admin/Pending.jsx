@@ -3,16 +3,16 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import UserTable from "./UserTable";
 import noData from "../../assets/noData.png";
 
-function Consumer() {
+function Pending() {
   const axiosSecure = useAxiosSecure();
   const {
     data = [],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["consumers"],
+    queryKey: ["pending-account"],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/consumers`);
+      const res = await axiosSecure.get(`/pending`);
       return res.data;
     },
   });
@@ -26,7 +26,7 @@ function Consumer() {
   return (
     <>
       <p className="text-center my-5 text-3xl font-medium">
-        Total Consumers{" "}
+        Total Pending Accounts{" "}
         <span className="bg-green-200 text-green-color px-3 py-1">
           {data.length}
         </span>
@@ -47,4 +47,4 @@ function Consumer() {
   );
 }
 
-export default Consumer;
+export default Pending;
