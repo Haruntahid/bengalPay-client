@@ -2,9 +2,9 @@ import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import sendMoney from "../../assets/send-money.png";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../provider/AuthProvider";
 import Swal from "sweetalert2";
+import GetUserData from "../reusable/GetUserData";
 
 // eslint-disable-next-line react/prop-types
 function SendMoneyForm({ onSubmit }) {
@@ -15,19 +15,13 @@ function SendMoneyForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
   const id = user;
 
+  const { userData, isLoading } = GetUserData();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  const { data: userData = {}, isLoading } = useQuery({
-    queryKey: ["send-balance"],
-    queryFn: async () => {
-      const res = await axiosSecure.get("/balance");
-      return res.data;
-    },
-  });
 
   const handleNextStep = (data) => {
     if (step === 1) {
@@ -92,7 +86,7 @@ function SendMoneyForm({ onSubmit }) {
         setError("");
       });
     } else {
-      const sendData = { ...data, remainingBalance, id };
+      const sendData = { ...data, remainingBalance, id, type: "send money" };
 
       // password check
       axiosSecure.post("/password-check", sendData).then((res) => {
@@ -104,7 +98,7 @@ function SendMoneyForm({ onSubmit }) {
         if (res.data.message === "success") {
           onSubmit({ ...data, remainingBalance, user });
           // send money
-          axiosSecure.patch("/send-money", sendData).then((res) => {
+          axiosSecure.patch("/transaction", sendData).then((res) => {
             if (res.data.transactionId) {
               Swal.fire({
                 title: "Transaction Successful",
@@ -151,8 +145,9 @@ function SendMoneyForm({ onSubmit }) {
           <li>2. Every transaction over 100 Taka has a 5 Taka fee.</li>
           <li>
             3. Send Money is only applicable for registered{" "}
-            <span className="text-green-color">Consumer</span> accounts on
-            Bengal Pay. It is not applicable for Admin or Agent accounts .
+            <span className="text-green-color font-semibold">Consumer</span>{" "}
+            accounts on Bengal Pay. It is not applicable for Admin or Agent
+            accounts .
           </li>
         </ol>
       </div>

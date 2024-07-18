@@ -1,18 +1,9 @@
 import { useState, useEffect } from "react";
 import balance from "../../assets/Balance Inquiry.png";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
-import { useQuery } from "@tanstack/react-query";
+import GetUserData from "../reusable/GetUserData";
 
 function BalanceInquiry() {
-  const axiosSecure = useAxiosSecure();
-
-  const { data = {}, isLoading } = useQuery({
-    queryKey: ["balance"],
-    queryFn: async () => {
-      const res = await axiosSecure.get("/balance");
-      return res.data;
-    },
-  });
+  const { userData, isLoading } = GetUserData();
 
   const [showBalance, setShowBalance] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -74,7 +65,7 @@ function BalanceInquiry() {
               showBalance ? "opacity-100" : "opacity-0"
             }`}
           >
-            {data.balance} TK
+            {userData.balance} TK
           </span>
           <span
             className={`absolute text-green-600 text-xl font-semibold transition-opacity duration-500 ${
