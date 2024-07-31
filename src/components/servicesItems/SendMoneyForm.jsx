@@ -53,7 +53,7 @@ function SendMoneyForm({ onSubmit }) {
         let totalAmount;
 
         // Balance between 50 - 100
-        if (ammount > 50 && ammount <= 100) {
+        if (ammount >= 50 && ammount <= 100) {
           remainingAmount = userData.balance - ammount;
           if (remainingAmount <= 0) {
             setError("Insufficient Balance");
@@ -90,11 +90,6 @@ function SendMoneyForm({ onSubmit }) {
 
       // password check
       axiosSecure.post("/password-check", sendData).then((res) => {
-        console.log(res.data);
-        if (res.data === "Not Found") {
-          setError("This Phone Number is Not Register on Bengal Pay");
-        }
-        console.log(res.data.message);
         if (res.data.message === "success") {
           onSubmit({ ...data, remainingBalance, user });
           // send money

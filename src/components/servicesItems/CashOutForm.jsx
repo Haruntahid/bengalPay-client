@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 
 // eslint-disable-next-line react/prop-types
 function CashOutForm({ onSubmit }) {
+  const [errorss, setErrorss] = useState("");
   const axiosSecure = useAxiosSecure();
   const [step, setStep] = useState(1);
   const [manualInput, setManualInput] = useState("");
@@ -16,6 +17,8 @@ function CashOutForm({ onSubmit }) {
   const [balanceError, setBalanceError] = useState("");
   const [cashOutMoney, setCashOutMoney] = useState();
   const [remainingBalance, setRemainingBalance] = useState(0);
+  const [cashOutFee, setCashOutFee] = useState(0);
+  const [total, setTotal] = useState(0);
   const {
     register,
     handleSubmit,
@@ -45,42 +48,60 @@ function CashOutForm({ onSubmit }) {
       const cashOutFee = (parseInt(data.amount) * 1.5) / 100;
       const totalCharge = parseInt(data.amount) + cashOutFee;
 
-      console.log(cashOutFee);
-      console.log(totalCharge);
+      setCashOutFee(cashOutFee);
+      setTotal(totalCharge);
       setCashOutMoney(avilableForCashout);
       setRemainingBalance(userData.balance - totalCharge);
 
       if (data.amount > avilableForCashout) {
         setBalanceError("Insufficient Balance");
-      } else if (data.amount < 0) {
-        setBalanceError("Transaction amount cannot be negative.");
+      } else if (data.amount <= 0) {
+        setBalanceError("Transaction amount cannot be 0 or negative.");
       } else {
         setStep(2);
         setCashOutMoney();
       }
     } else {
-      const sendData = { ...data, id, remainingBalance, type: "cash out" };
+      const sendData = {
+        ...data,
+        id,
+        remainingBalance,
+        cashOutFee,
+        total,
+        type: "cash out",
+      };
 
-      axiosSecure.patch("/transaction", sendData).then((res) => {
-        if (res.data.transactionId) {
-          Swal.fire({
-            title: "Transaction Successful",
-            html: `
-              <p><strong>Transaction ID:</strong> ${res.data.transactionId}</p>
-              <p><strong>Recipient:</strong> ${res.data.recipient}</p>
-              <p><strong>Amount:</strong> ${res.data.amount} Taka</p>
-              <p><strong>Remaining Balance:</strong> ${res.data.remainingBalance} Taka</p>
-            `,
-            icon: "success",
-            confirmButtonText: "OK",
-            imageWidth: 400,
-            imageHeight: 200,
-            imageAlt: "Custom image",
+      axiosSecure.post("/password-check", sendData).then((res) => {
+        console.log(res.data.message);
+        if (res.data.message === "success") {
+          onSubmit({ ...data, remainingBalance });
+          // Cashout
+          axiosSecure.patch("/transaction", sendData).then((res) => {
+            if (res.data.transactionId) {
+              Swal.fire({
+                title: "Transaction Successful",
+                html: `
+                  <p><strong>Transaction ID:</strong> ${res.data.transactionId}</p>
+                  <p><strong>Recipient:</strong> ${res.data.recipient}</p>
+                  <p><strong>Amount:</strong> ${res.data.amount} Taka</p>
+                  <p><strong>Fee:</strong> ${cashOutFee} Taka</p>
+                  <p><strong>Total:</strong> ${total} Taka</p>
+                  <p><strong>Remaining Balance:</strong> ${res.data.remainingBalance} Taka</p>
+                `,
+                icon: "success",
+                confirmButtonText: "OK",
+                imageWidth: 400,
+                imageHeight: 200,
+                imageAlt: "Custom image",
+              });
+            }
           });
+        } else {
+          setErrorss("Wrong Pin");
         }
       });
       console.log(sendData);
-      onSubmit(data);
+      // onSubmit(data);
     }
   };
 
@@ -263,6 +284,7 @@ function CashOutForm({ onSubmit }) {
                 <span className="text-rose-500">{errors.pin.message}</span>
               )}
             </div>
+            {errorss && <p className="my-2 text-red-500">{errorss}</p>}
             <button
               type="submit"
               className="w-full bg-green-color text-white py-2 rounded"

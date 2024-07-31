@@ -9,6 +9,7 @@ import Modal from "./Modal";
 import CashInForm from "./servicesItems/CashInForm";
 import CashOutForm from "./servicesItems/CashOutForm";
 import BalanceInquiry from "./servicesItems/BalanceInquiry";
+import Transactions from "./servicesItems/Transactions";
 
 function Services() {
   const serviceItems = [
@@ -61,6 +62,10 @@ function Services() {
           {selectedService && selectedService.name === "Balance Inquiry" && (
             <BalanceInquiry onSubmit={handleSubmit} />
           )}
+          {selectedService &&
+            selectedService.name === "Transaction History" && (
+              <Transactions onSubmit={handleSubmit} />
+            )}
         </Modal>
       )}
     </>
