@@ -13,6 +13,8 @@ function SendMoneyForm({ onSubmit }) {
   const [remainingBalance, setRemainingBalance] = useState(0);
   const [step, setStep] = useState(1);
   const { user } = useContext(AuthContext);
+  const [total, setTotal] = useState(0);
+  const [cashOutFee, setCashOutFee] = useState(0);
   const id = user;
 
   const { userData, isLoading } = GetUserData();
@@ -64,7 +66,9 @@ function SendMoneyForm({ onSubmit }) {
 
         if (ammount > 100) {
           const fee = 5;
+          setCashOutFee(fee);
           totalAmount = ammount + fee;
+          setTotal(totalAmount);
           remainingAmount = userData.balance - totalAmount;
 
           console.log(remainingAmount);
@@ -76,9 +80,6 @@ function SendMoneyForm({ onSubmit }) {
           }
 
           setRemainingBalance(remainingAmount);
-          console.log(
-            `Transaction processed successfully: Amount ${ammount} taka, Fee ${fee} taka deducted, Total ${totalAmount} taka. Remaining ${remainingAmount}`
-          );
         }
 
         // Proceed to step 2 if all conditions are met
@@ -101,6 +102,8 @@ function SendMoneyForm({ onSubmit }) {
                   <p><strong>Transaction ID:</strong> ${res.data.transactionId}</p>
                   <p><strong>Recipient:</strong> ${res.data.recipient}</p>
                   <p><strong>Amount:</strong> ${res.data.amount} Taka</p>
+                  <p><strong>Fee:</strong> ${cashOutFee} Taka</p>
+                  <p><strong>Total:</strong> ${total} Taka</p>
                   <p><strong>Remaining Balance:</strong> ${res.data.remainingBalance} Taka</p>
                 `,
                 icon: "success",

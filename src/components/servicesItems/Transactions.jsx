@@ -3,16 +3,18 @@ import transactionHistory from "../../assets/Transactions History.png";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import GetUserData from "../reusable/GetUserData";
 import { FaCopy } from "react-icons/fa";
+import { TbCurrencyTaka } from "react-icons/tb";
 
 function Transactions() {
-  const { userData } = GetUserData();
+  const { userData, isLoading: userDataLoading } = GetUserData();
+  console.log(userData);
   const id = userData._id;
-  console.log(id);
+  console.log(userData.accountType);
 
   const axiosSecure = useAxiosSecure();
 
   const { data = [], isLoading } = useQuery({
-    queryKey: ["transaction-history"],
+    queryKey: ["transaction-history", id],
     queryFn: async () => {
       const res = await axiosSecure.get(`/transaction-history/${id}`);
       return res.data;
@@ -27,7 +29,7 @@ function Transactions() {
 
   console.log(data);
 
-  if (isLoading)
+  if (isLoading || userDataLoading)
     return (
       <div className="flex justify-center items-center h-[80vh]">
         <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin dark:border-green-color"></div>
@@ -49,19 +51,58 @@ function Transactions() {
             className="flex justify-between items-center border p-4 rounded-lg shadow-md"
           >
             <div>
-              <p className="text-lg font-semibold">{transaction.type}</p>
-              <p className="text-sm">{transaction.receiver}</p>
+              <p className="text-lg font-semibold capitalize">
+                {transaction.type}
+              </p>
+              <p className="text-[18px]">
+                {userData.accountType === "Consumer"
+                  ? transaction.type === "cash out" ||
+                    transaction.type === "send money"
+                    ? transaction.receiver
+                    : transaction.type === "cash in"
+                    ? transaction.sender
+                    : ""
+                  : userData.accountType === "Agent"
+                  ? transaction.type === "cash out"
+                    ? transaction.sender
+                    : transaction.type === "cash in"
+                    ? transaction.receiver
+                    : ""
+                  : ""}
+              </p>
+
               <p className="text-sm flex items-center gap-2">
                 {transaction.trxId}
                 <FaCopy
-                  className="cursor-pointer"
+                  title="Copy"
+                  className="cursor-pointer text-blue-500"
                   onClick={() => handleCopy(transaction.trxId)}
                 />
               </p>
               <p className="text-xs text-gray-500">{transaction.date}</p>
             </div>
             <div className="text-right">
-              <p className="text-lg font-semibold">{transaction.amount}</p>
+              <p
+                className={`text-2xl inline-flex items-center font-bold ${
+                  userData.accountType === "Consumer"
+                    ? transaction.type === "cash out" ||
+                      transaction.type === "send money"
+                      ? "text-red-500"
+                      : transaction.type === "cash in"
+                      ? "text-green-500"
+                      : ""
+                    : userData.accountType === "Agent"
+                    ? transaction.type === "cash out"
+                      ? "text-green-500"
+                      : transaction.type === "cash in"
+                      ? "text-red-500"
+                      : ""
+                    : ""
+                }`}
+              >
+                <TbCurrencyTaka className="font-black" size={22} />{" "}
+                {transaction.amount}
+              </p>
             </div>
           </div>
         ))}

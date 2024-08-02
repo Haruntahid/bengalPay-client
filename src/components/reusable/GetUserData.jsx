@@ -12,10 +12,10 @@ function GetUserData() {
     },
   });
 
-  if (isLoading)
-    <div className="flex justify-center items-center h-[80vh]">
-      <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin dark:border-green-color"></div>
-    </div>;
+  // if (isLoading)
+  //   <div className="flex justify-center items-center h-[80vh]">
+  //     <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin dark:border-green-color"></div>
+  //   </div>;
   return {
     userData,
     isLoading,

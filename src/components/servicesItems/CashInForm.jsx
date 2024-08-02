@@ -32,6 +32,7 @@ function CashInForm({ onSubmit }) {
 
   const { userData, loading = isLoading } = GetUserData();
   const id = userData._id;
+  const requester = userData.phone;
 
   const handleNextStep = (data) => {
     if (step === 1) {
@@ -42,7 +43,13 @@ function CashInForm({ onSubmit }) {
       console.log(data);
       setStep(2);
     } else {
-      const sendData = { ...data, id, type: "cash in", status: "pending" };
+      const sendData = {
+        ...data,
+        id,
+        requester,
+        type: "cash in",
+        status: "pending",
+      };
       // check the password
       axiosSecure.post("/password-check", sendData).then((res) => {
         console.log(res.data);
